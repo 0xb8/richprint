@@ -6,6 +6,9 @@
 #include <map>
 #include <string>
 #include <sstream>
+#include <cmrc/cmrc.hpp>
+
+CMRC_DECLARE(richprint_rc);
 
 using std::cout;
 using std::cerr;
@@ -275,9 +278,9 @@ void getRichheader( char const *fname, StrMap const &descriptions )
 }
 
 //
-void loadDescriptions( char const *fname, StrMap &descriptions )
+void loadDescriptions( char const *data, StrMap &descriptions )
 {
-    std::fstream file( fname, ios::in );
+    std::istringstream file( data);
     if(! file.good() )
     {
         return;
@@ -312,6 +315,8 @@ void loadDescriptions( char const *fname, StrMap &descriptions )
 
 } // anonymous namespace ends
 
+
+
 //
 int main( int argc, char *argv[] )
 {
@@ -324,8 +329,11 @@ int main( int argc, char *argv[] )
         return 0;
     }
 
+    auto fs = cmrc::richprint_rc::get_filesystem();
+    auto f = fs.open("comp_id.txt");
+
     StrMap descriptions;
-    loadDescriptions( "comp_id.txt", descriptions );
+    loadDescriptions( f.begin(), descriptions );
 
     for( int i = 1; i < argc; ++i )
     {
